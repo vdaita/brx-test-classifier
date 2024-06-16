@@ -32,10 +32,7 @@ text = st.text_area("Enter text to process.")
 schema = """{"description":"","brxName":"Named Entity Classificatino","brxId":"b75bc574-ce23-42ed-a5de-105aa1b4b72d","dependantBrxIds":{},"processType":7,"schemas":{"mainBrxId":"b75bc574-ce23-42ed-a5de-105aa1b4b72d","schemas":{"_isMap":true,"data":[["main_brx_entry_schema",{"schemaFields":{"_isMap":true,"data":[["classification_rules",{"fieldValueDataType":"string"}],["text",{"fieldValueDataType":"string"}]]},"brxName":"Named Entity Classificatino","brxId":"b75bc574-ce23-42ed-a5de-105aa1b4b72d"}]]}}}"""
 
 import json
-from dotenv import load_dotenv
 import os
-
-load_dotenv(".env")
 
 brx_client = brx.BRX(
     access_token=os.environ.get("BRX_ACCESS_TOKEN"),
