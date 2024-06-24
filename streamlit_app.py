@@ -50,22 +50,23 @@ def apply_dict_to_if(input_dict, input_fields):
     return input_fields
 
 def call_brk(schema, data):
-    query_rebuild = brx.sftoq(schema)
-    output_object = query_rebuild["brx_query"]
-    input_fields = query_rebuild["input_fields"]
-    input_fields = apply_dict_to_if(data, input_fields)
-    updated_query = brx.uif(input_fields, output_object)
-    result = brx_client.execute(updated_query["brx_query"])
-    result = json.loads(result[0])
-    try:
-        result = result["brxRes"]["output"]
-        st.write(f"{data['text']} - {result}\n")
-        return result
-    except Exception as e:
-        print(e)
-        print("Result: ", result)
-        st.write(f"Error result: {str(result)}")
-        return None
+    with st.spinner("Generating response..."):
+        query_rebuild = brx.sftoq(schema)
+        output_object = query_rebuild["brx_query"]
+        input_fields = query_rebuild["input_fields"]
+        input_fields = apply_dict_to_if(data, input_fields)
+        updated_query = brx.uif(input_fields, output_object)
+        result = brx_client.execute(updated_query["brx_query"])
+        result = json.loads(result[0])
+        try:
+            result = result["brxRes"]["output"]
+            st.success(f"{data['text']} - {result}\n")
+            return result
+        except Exception as e:
+            print(e)
+            print("Result: ", result)
+            st.write(f"Error result: {str(result)}")
+            return None
 
 if st.button("Process"):
     # check for length
