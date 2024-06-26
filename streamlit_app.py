@@ -29,8 +29,6 @@ extraction_rules = st.text_input("State how each entity should be classified.")
 
 text = st.text_area("Enter text to process.")
 
-schema = """{"description":"","brxName":"Named Entity Classificatino","brxId":"b75bc574-ce23-42ed-a5de-105aa1b4b72d","dependantBrxIds":{},"processType":7,"schemas":{"mainBrxId":"b75bc574-ce23-42ed-a5de-105aa1b4b72d","schemas":{"_isMap":true,"data":[["main_brx_entry_schema",{"schemaFields":{"_isMap":true,"data":[["classification_rules",{"fieldValueDataType":"string"}],["text",{"fieldValueDataType":"string"}]]},"brxName":"Named Entity Classificatino","brxId":"b75bc574-ce23-42ed-a5de-105aa1b4b72d"}]]}}}"""
-
 import json
 import os
 
@@ -49,15 +47,15 @@ def apply_dict_to_if(input_dict, input_fields):
                 input_fields[index]["value"] = input_dict[dict_key]
     return input_fields
 
-def call_brk(schema, data):
+def call_brk(data):
     with st.spinner("Generating response..."):
-        query_rebuild = brx.sftoq(schema)
-        output_object = query_rebuild["brx_query"]
-        input_fields = query_rebuild["input_fields"]
-        input_fields = apply_dict_to_if(data, input_fields)
-        updated_query = brx.uif(input_fields, output_object)
-        result = brx_client.execute(updated_query["brx_query"])
+        print("Test")
+        result = brx_client.run_sfid_with_dict(
+            "b75bc574-ce23-42ed-a5de-105aa1b4b72d",
+            data
+        )
         result = json.loads(result[0])
+        print(result)
         try:
             result = result["brxRes"]["output"]
             st.success(f"{data['text']} - {result}\n")
@@ -83,6 +81,6 @@ if st.button("Process"):
             for entity_type in entity_types:
                 if entity.label_ == entity_type.split("-")[0].strip():
                     to_classify.append(entity.text)
-                    call_brk(schema, 
+                    call_brk( 
                         {"classification_rules": extraction_rules, "text": entity.text}
                     )
